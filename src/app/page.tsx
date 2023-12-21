@@ -46,7 +46,9 @@ export default async function Home() {
             <p>
               I am currently open to contract and full-time employment. Please don&apos;t hesitate to reach out if you would like to connect!
             </p> */}
-            <DisplayOnlyPlayingCard className="mt-8" suit={suits[3]} rank={ranks[0]} isShowing/>
+            <Link href="/nerts" >
+              <DisplayOnlyPlayingCard className="mt-8" suit={suits[3]} rank={ranks[0]} isShowing/>
+            </Link>
           </div>
           {/* socials */}
           {/* <div className="mt-6 flex gap-6">
