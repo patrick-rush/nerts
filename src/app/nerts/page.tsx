@@ -303,7 +303,7 @@ export default function Nerts() {
 
     /* board */
     return (
-        <Container className="flex h-full items-center pt-8 sm:pt-16" >
+        <Container className="flex h-full items-center pt-8" >
             <LayoutGroup >
                 <div className="rounded-2xl sm:border sm:border-zinc-100 sm:p-8 sm:dark:border-zinc-700/40">
                     {/* lake */}

@@ -1,34 +1,15 @@
 import Link from 'next/link'
-import { Card } from '@/components/Card'
 import { Container } from '@/components/Container'
-import { Photos } from '@/components/Photos'
-import { Contact } from '@/components/Contact'
-import { Resume } from '@/components/Resume'
 import {
   GitHubIcon,
   InstagramIcon,
   LinkedInIcon,
   TwitterIcon,
 } from '@/components/SocialIcons'
-import { type ArticleWithSlug, getAllArticles } from '@/lib/articles'
-import { formatDate } from '@/lib/formatDate'
-import { CommitGrid } from '@/components/CommitGrid'
-
-
-function Article({ article }: { article: ArticleWithSlug }) {
-  return (
-    <Card as="article">
-      <Card.Title href={`/articles/${article.slug}`}>
-        {article.title}
-      </Card.Title>
-      <Card.Eyebrow as="time" dateTime={article.date} decorate>
-        {formatDate(article.date)}
-      </Card.Eyebrow>
-      <Card.Description>{article.description}</Card.Description>
-      <Card.Cta>Read article</Card.Cta>
-    </Card>
-  )
-}
+import { PlayingCard } from '@/components/PlayingCard'
+import { ranks, suits } from '@/constants/nerts'
+import { motion } from 'framer-motion'
+import { DisplayOnlyPlayingCard } from '@/components/DisplayOnlyPlayingCard'
 
 function SocialLink({
   icon: Icon,
@@ -44,30 +25,31 @@ function SocialLink({
 }
 
 export default async function Home() {
-  let articles = (await getAllArticles()).slice(0, 4)
+  "use client"
 
   return (
     <>
-      <Container className="mt-9">
+      <Container className="absolute top-36 left-1/4 right-1/4 text-balance">
         {/* <div className="max-w-2xl"> */}
-        <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 gap-x-20 lg:max-w-none lg:grid-cols-2">
+        <div className="mx-auto text-center">
           <div>
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Patrick Rush
+            NERTS
           </h1>
           <div className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
             <p>
-              Hello! I&apos;m a full-stack software engineer and cellist with a passion for crafting effective code and beautiful music. I bring creativity, intelligence, and a love for learning to everything I do.
+              Nerts is a fast-paced, multi-player card game that combines the excitement of Solitaire with the competitive edge of a race. Players simultaneously build sequences of cards while trying to outmaneuver their opponents. It's a dynamic, energetic experience that tests your speed, strategy, and adaptability. Dive into Nerts, where quick thinking and a sharp eye can lead you to victory!
             </p>
-            <p>
+            {/* <p>
               Join me on this journey where software engineering meets artistry, and let&apos;s create something beautiful together.
             </p>
             <p>
               I am currently open to contract and full-time employment. Please don&apos;t hesitate to reach out if you would like to connect!
-            </p>
+            </p> */}
+            <DisplayOnlyPlayingCard className="mt-8" suit={suits[3]} rank={ranks[0]} isShowing/>
           </div>
           {/* socials */}
-          <div className="mt-6 flex gap-6">
+          {/* <div className="mt-6 flex gap-6">
             <SocialLink
               href={`${process.env.TWITTER_URL}`}
               aria-label="Follow on Twitter"
@@ -88,29 +70,17 @@ export default async function Home() {
               aria-label="Follow on LinkedIn"
               icon={LinkedInIcon}
             />
-          </div>
-          </div>
-          <Resume />
-        </div>
-      </Container>
-      <Photos />
-      <Container className="mt-24 md:mt-28">
-        <CommitGrid />
-      </Container>
-      <Container className="mt-24 md:mt-28">
-        <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
-          <div className="flex flex-col gap-16">
-            {articles.map((article) => (
-              <Article key={article.slug} article={article} />
-            ))}
-          </div>
-          <div className="space-y-10 lg:pl-16 xl:pl-24">
-            <div className="space-y-10">
-              <Contact />
+          </div> */}
+          {/* <PlayingCard className="blur-sm" suit={suits[3]} rank={ranks[0]} isShowing /> */}
             </div>
           </div>
-        </div>
       </Container>
+      <div className="overflow-hidden">
+          {/* <DisplayOnlyPlayingCard className="absolute top-1/2 left-1/2 z-[-10] shadow-md shadow-zinc-800 rounded-lg overflow-hidden" suit={suits[3]} rank={ranks[0]} scale={[1.5, 2, 2.5, 2, 1.5, 1.25, 1.5]} isShowing />
+          <DisplayOnlyPlayingCard className="absolute top-1/4 left-1/4 z-[-12] shadow-md shadow-zinc-800 rounded-lg overflow-hidden" suit={suits[2]} rank={ranks[4]} scale={[1.25, 1.5, 1.5, 2, 2.5, 2, 1.5]} isShowing />
+          <DisplayOnlyPlayingCard className="absolute top-3/4 left-1/2 z-[-14] shadow-md shadow-zinc-800 rounded-lg overflow-hidden" suit={suits[1]} rank={ranks[8]} scale={[2.5, 2, 1.5, 1.25, 1.5, 1.5, 2]} isShowing />
+          <DisplayOnlyPlayingCard className="absolute top-1/2 left-3/4 z-[-16] shadow-md shadow-zinc-800 rounded-lg overflow-hidden" suit={suits[0]} rank={ranks[12]} scale={[1.5, 2, 2.5, 2, 1.5, 1.25, 1.5]} isShowing /> */}
+      </div>
     </>
   )
 }
