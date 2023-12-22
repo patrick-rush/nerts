@@ -14,7 +14,7 @@ export default function Home() {
     rest: { opacity: 0, scale: 0.5 },
     animate: { opacity: 1, scale: 1 },
     hover: {
-      scale: 1.1, // Scales up the whole container
+      scale: 1.1,
       transition: {
         duration: 0.8,
         ease: [0, 0.71, 0.2, 1.01],
@@ -174,57 +174,3 @@ export default function Home() {
     </SimpleLayout>
   )
 }
-
-/* 
-
-          <div id="cards" className="flex justify-center" onClick={() => setCreateNew(true)}>
-            <motion.div
-              initial={{
-                // Initial styles for the whole card container
-              }}
-              transition={{
-                duration: 0.8,
-                ease: [0, 0.71, 0.2, 1.01],
-              }}
-              whileHover={{
-                scale: 1.1, // Scales up the whole container
-              }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <motion.div
-                id="king"
-                className="flex justify-center"
-                initial={{ rotate: 0 }} // Starts hidden behind the ace
-                whileHover={{ rotate: 6 }} // Rotates to the right when hovered
-              >
-                <DisplayOnlyPlayingCard
-                  className="mt-8 left-2"
-                  suit={suits[0]}
-                  rank={ranks[12]}
-                  isShowing
-                />
-              </motion.div>
-              <motion.div
-                id="queen"
-                className="flex justify-center"
-                initial={{ rotate: 0 }} // Starts hidden behind the ace
-                whileHover={{ rotate: -6 }} // Rotates to the left when hovered
-              >
-                <DisplayOnlyPlayingCard
-                  className="mt-8 right-2"
-                  suit={suits[2]}
-                  rank={ranks[11]}
-                  isShowing
-                />
-              </motion.div>
-              <div id="ace" className="flex justify-center">
-                <DisplayOnlyPlayingCard
-                  className="mt-8"
-                  suit={suits[3]}
-                  rank={ranks[0]}
-                  isShowing
-                />
-              </div>
-            </motion.div>
-          </div>
-*/

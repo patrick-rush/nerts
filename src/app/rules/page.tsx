@@ -100,23 +100,3 @@ export default function Rules() {
     </SimpleLayout>
   )
 }
-
-
-// ### Winning:
-// The winner is the player with the highest score after points are tallied from the middle stacks, King stacks, Lake, and Nert stack.
-
-//     </p>
-
-
-// ### Gameplay:
-// **Objective**: Be the first to empty your Nert stack and accumulate the most points.
-
-
-// ### Additional Rules:
-// - Communication: Players should not disclose the contents of their hand or upcoming plays to others.
-// - Speed: Nerts is played quickly. Players should strive to play as swiftly and accurately as possible.
-// - Etiquette: Respect your fellow players. While fast and competitive, Nerts should remain friendly and fun.
-
-// Remember, practice makes perfect. As you play more, you&apos;ll develop strategies and reflexes that can help you become a Nerts champion. Good luck, and enjoy the game!
-//   </div>
-// </Container> */

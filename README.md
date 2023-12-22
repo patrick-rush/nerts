@@ -1,6 +1,8 @@
-# patrickrush.tech
+# NERTS!
 
-This project is my personal portfolio website. It is constantly evolving. Feel free to peruse and get to know my style. To view the currently deployed version of this project, visit http://patrickrush.tech/. If you like what you see, feel free to reach out to me via my website contact form!
+A game built by Patrick Rush. Questions? Reach out to me on my website: patrickrush.tech
+
+Have fun!
 
 ## Getting started
 

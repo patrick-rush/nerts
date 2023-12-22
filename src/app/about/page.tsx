@@ -80,10 +80,10 @@ export default function About() {
                 Transitioning to tech in 2020 allowed me to blend creativity, intelligence, and a love for learning into my professional journey. My approach to coding mirrors my musical roots - I aim for beauty in every line, crafting code that is not only effective but also a joy to behold - hopefully leaving things more beautiful than I found them wherever I go. 
             </p>
             <p>
-                My affinity for strategy and connection found a unique outlet when I started playing nerts at the age of 15. It became a bonding ritual between my family and my best friend&apo;s family, weaving itself as a staple through the years. I&apo;ve since introduced this fast-paced, somewhat rowdy game to many friends, cherishing the lively interactions it fosters. While I realize the internet can&apo;t fully replicate the game&apo;s spirited nature, my aspiration was to create a digital space where friends, old and new, near and far, can gather and share in this joy. It&apo;s my nod to maintaining connections and celebrating shared pastimes in our increasingly digital world.
+                My affinity for strategy and connection found a unique outlet when I started playing nerts at the age of 15. It became a bonding ritual between my family and my best friend&apos; family, weaving itself as a staple through the years. I&apos;ve since introduced this fast-paced, somewhat rowdy game to many friends, cherishing the lively interactions it fosters. While I realize the internet can&apos;t fully replicate the game&apos; spirited nature, my aspiration was to create a digital space where friends, old and new, near and far, can gather and share in this joy. It&apos; my nod to maintaining connections and celebrating shared pastimes in our increasingly digital world.
             </p>
             <p>
-                I wish you luck and endless enjoyment. May each game of Nerts bring you the thrill of competition, the warmth of connection, and the sheer delight of play. Here&apo;s to great games and good times - enjoy!
+                I wish you luck and endless enjoyment. May each game of Nerts bring you the thrill of competition, the warmth of connection, and the sheer delight of play. Here&apos; to great games and good times - enjoy!
             </p>
           </div>
         </div>
