@@ -11,6 +11,8 @@ export default function Home() {
   const [createNew, setCreateNew] = useState(false)
 
   const deckMotion = {
+    rest: { opacity: 0, scale: 0.5 },
+    animate: { opacity: 1, scale: 1 },
     hover: {
       scale: 1.1, // Scales up the whole container
       transition: {
@@ -27,7 +29,7 @@ export default function Home() {
     },
     hover: {
       rotate: -6,
-      x: -50 
+      x: -50
     }
   }
 
@@ -60,7 +62,7 @@ export default function Home() {
         >
           <form
             onSubmit={() => console.log("submit it!")}
-            className="relative w-6/12 rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
+            className="relative w-9/12 md:w-6/12 rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
           >
             <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               <span>Create a new game</span>
@@ -95,10 +97,11 @@ export default function Home() {
 
         </motion.div>
         :
-        <div id="cards" className="flex justify-center" onClick={() => setCreateNew(true)}>
+        <div id="cards" className="flex h-48 justify-center mt-4" onClick={() => setCreateNew(true)}>
           <motion.div
             initial="rest"
             whileHover="hover"
+            animate="animate"
             variants={deckMotion}
             whileTap={{ scale: 1 }}
           >
@@ -107,8 +110,18 @@ export default function Home() {
               className="flex justify-center"
               variants={kingMotion}
             >
+              <motion.div
+                id="king"
+                className="flex justify-center"
+                variants={kingMotion}
+              >
+                <DisplayOnlyPlayingCard
+                  suit={suits[1]}
+                  rank={ranks[12]}
+                  isShowing
+                />
+              </motion.div>
               <DisplayOnlyPlayingCard
-                className="mt-8"
                 suit={suits[0]}
                 rank={ranks[12]}
                 isShowing
@@ -119,8 +132,18 @@ export default function Home() {
               className="flex justify-center"
               variants={queenMotion}
             >
+              <motion.div
+                id="queen"
+                className="flex justify-center"
+                variants={queenMotion}
+              >
+                <DisplayOnlyPlayingCard
+                  suit={suits[1]}
+                  rank={ranks[11]}
+                  isShowing
+                />
+              </motion.div>
               <DisplayOnlyPlayingCard
-                className="mt-8"
                 suit={suits[2]}
                 rank={ranks[11]}
                 isShowing
@@ -130,7 +153,6 @@ export default function Home() {
 
               <div id="ace" className="flex justify-center">
                 <DisplayOnlyPlayingCard
-                  className="mt-8"
                   suit={suits[3]}
                   rank={ranks[0]}
                   isShowing
