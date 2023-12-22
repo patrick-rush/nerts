@@ -74,16 +74,16 @@ export default function About() {
           </h1>
           <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
             <p>
-              As a full-stack software engineer, I draw inspiration from a diverse background that includes classical music and the coffee industry. 
+                As a full-stack software engineer, I draw inspiration from a diverse background that includes classical music and the coffee industry. 
             </p>
             <p>
-              Transitioning to tech in 2020 allowed me to blend creativity, intelligence, and a love for learning into my professional journey. My approach to coding mirrors my musical roots - I aim for beauty in every line, crafting code that is not only effective but also a joy to behold - hopefully leaving things more beautiful than I found them wherever I go. 
+                Transitioning to tech in 2020 allowed me to blend creativity, intelligence, and a love for learning into my professional journey. My approach to coding mirrors my musical roots - I aim for beauty in every line, crafting code that is not only effective but also a joy to behold - hopefully leaving things more beautiful than I found them wherever I go. 
             </p>
             <p>
-              Constantly evolving, I bring the mindset of a lifelong student to each project. My ability to rapidly grasp new patterns and my dedication to continuous practice have propelled me to a mid-level engineering position within my first few years in the industry.
+                My affinity for strategy and connection found a unique outlet when I started playing nerts at the age of 15. It became a bonding ritual between my family and my best friend&apos; family, weaving itself as a staple through the years. I&apos;ve since introduced this fast-paced, somewhat rowdy game to many friends, cherishing the lively interactions it fosters. While I realize the internet can&apos;t fully replicate the game&apos; spirited nature, my aspiration was to create a digital space where friends, old and new, near and far, can gather and share in this joy. It&apos; my nod to maintaining connections and celebrating shared pastimes in our increasingly digital world.
             </p>
             <p>
-              In addition to my technical skill, I&apos;m a musician, a pilot, a knitter, a yogi, and a cyclist. These diverse interests shape my character, influencing my work with qualities like integrity, kindness, drive, and a meticulous attention to detail. Whether navigating the skies or weaving intricate patterns with code, I am the same person – passionate, professional, and fascinated by the world around me. Join me on this journey where software engineering meets artistry, and let&apos;s create something beautiful together.
+                I wish you luck and endless enjoyment. May each game of Nerts bring you the thrill of competition, the warmth of connection, and the sheer delight of play. Here&apos; to great games and good times - enjoy!
             </p>
           </div>
         </div>
