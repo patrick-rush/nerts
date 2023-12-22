@@ -1,116 +1,122 @@
-import { type Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import clsx from 'clsx'
+import { Card } from '@/components/Card'
+import { Section } from '@/components/Section'
+import { SimpleLayout } from '@/components/SimpleLayout'
 
-import { Container } from '@/components/Container'
-import {
-  GitHubIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  TwitterIcon,
-} from '@/components/SocialIcons'
-import portraitImage from '@/images/portrait.jpeg'
-import { PlayingCard } from '@/components/PlayingCard'
+function RulesSection({
+  children,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof Section>) {
+  return (
+    <Section {...props}>
+      <ul role="list" className="space-y-16">
+        {children}
+      </ul>
+    </Section>
+  )
+}
 
-function SocialLink({
-  className,
+function Rule({
+  title,
   href,
   children,
-  icon: Icon,
 }: {
-  className?: string
-  href: string
-  icon: React.ComponentType<{ className?: string }>
+  title: string
+  href?: string
   children: React.ReactNode
 }) {
   return (
-    <li className={clsx(className, 'flex')}>
-      <Link
-        href={href}
-        className="group flex text-sm font-medium text-zinc-800 transition hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-500"
-      >
-        <Icon className="h-6 w-6 flex-none fill-zinc-500 transition group-hover:fill-teal-500" />
-        <span className="ml-4">{children}</span>
-      </Link>
-    </li>
+    <Card as="li">
+      <Card.Title as="h3" href={href}>
+        {title}
+      </Card.Title>
+      <Card.Description>{children}</Card.Description>
+    </Card>
   )
 }
 
-function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
-      <path
-        fillRule="evenodd"
-        d="M6 5a3 3 0 0 0-3 3v8a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3H6Zm.245 2.187a.75.75 0 0 0-.99 1.126l6.25 5.5a.75.75 0 0 0 .99 0l6.25-5.5a.75.75 0 0 0-.99-1.126L12 12.251 6.245 7.187Z"
-      />
-    </svg>
-  )
+export const metadata = {
+  title: 'Rules',
+  description: "Welcome to Nerts! Here are some rules and explanations.",
 }
 
-export const metadata: Metadata = {
-  title: 'About',
-  description:
-    "I'm Patrick Rush. Software engineer and cellist living in Richmond, VA.",
-}
-
-export default function About() {
+export default function Rules() {
   return (
-    <Container className="mt-16 sm:mt-32">
-      <div className="grid grid-cols-1 gap-y-16 lg:grid-cols-2 lg:grid-rows-[auto_1fr] lg:gap-y-12">
-        <div className="lg:pl-20">
-          <div className="max-w-xs px-2.5 lg:max-w-none">
-            <Image
-              src={portraitImage}
-              alt=""
-              sizes="(min-width: 1024px) 32rem, 20rem"
-              className="aspect-square rotate-3 rounded-2xl bg-zinc-100 object-cover dark:bg-zinc-800"
-            />
-          </div>
-        </div>
-        <div className="lg:order-first lg:row-span-2">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-            Hi! I&apos;m Patrick Rush 👋🏼
-          </h1>
-          <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
-            <p>
-              As a full-stack software engineer, I draw inspiration from a diverse background that includes classical music and the coffee industry. 
-            </p>
-            <p>
-              Transitioning to tech in 2020 allowed me to blend creativity, intelligence, and a love for learning into my professional journey. My approach to coding mirrors my musical roots - I aim for beauty in every line, crafting code that is not only effective but also a joy to behold - hopefully leaving things more beautiful than I found them wherever I go. 
-            </p>
-            <p>
-              Constantly evolving, I bring the mindset of a lifelong student to each project. My ability to rapidly grasp new patterns and my dedication to continuous practice have propelled me to a mid-level engineering position within my first few years in the industry.
-            </p>
-            <p>
-              In addition to my technical skill, I&apos;m a musician, a pilot, a knitter, a yogi, and a cyclist. These diverse interests shape my character, influencing my work with qualities like integrity, kindness, drive, and a meticulous attention to detail. Whether navigating the skies or weaving intricate patterns with code, I am the same person – passionate, professional, and fascinated by the world around me. Join me on this journey where software engineering meets artistry, and let&apos;s create something beautiful together.
-            </p>
-          </div>
-        </div>
-        <div className="lg:pl-20">
-          <ul role="list">
-            <SocialLink href={`${process.env.TWITTER_URL}`} icon={TwitterIcon}>
-              Follow on Twitter
-            </SocialLink>
-            <SocialLink href={`${process.env.INSTAGRAM_URL}`} icon={InstagramIcon} className="mt-4">
-              Follow on Instagram
-            </SocialLink>
-            <SocialLink href={`${process.env.GITHUB_URL}`} icon={GitHubIcon} className="mt-4">
-              Follow on GitHub
-            </SocialLink>
-            <SocialLink href={`${process.env.LINKEDIN_URL}`} icon={LinkedInIcon} className="mt-4">
-              Follow on LinkedIn
-            </SocialLink>
-            <SocialLink
-              href={`${process.env.NEXT_PUBLIC_EMAIL_ADDRESS}`}
-              icon={MailIcon}
-              className="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-700/40"
-            >
-              {process.env.NEXT_PUBLIC_EMAIL_ADDRESS}
-            </SocialLink>
-          </ul>
-        </div>
+    <SimpleLayout
+      title="Nerts: Game Explanation and Rules"
+      intro="Welcome to Nerts, a fast-paced, competitive card game that combines strategy, speed, and a bit of luck. The objective is to score as many points as possible by playing cards to the middle stacks while minimizing points left in your Nert stack. Here&apos;s how you play:"
+    >
+      <div className="space-y-20">
+        <RulesSection title="Setup">
+          <Rule title="Online Play">
+            A player will need to enter their name and a desired point total to play to.<br />
+            When you&apos;re ready, click the start button and a game code will be generated.<br />
+            Your friends can join using the game code, after they enter their name.<br />
+            Once everybody is in the room, the person that started the game will need to hit the GO! button, and gameplay will begin.<br />
+          </Rule>
+          <Rule title="The Board">
+            Each player starts with their own standard 52-card deck.<br />
+            You&apos;ll start with 13 cards in a stack. This is your Nert stack.<br />
+            Four face-up cards will be dealt next. This is what we like to call the River.<br />
+            The remaining cards are called your Stream.<br />
+          </Rule>
+        </RulesSection>
+        <RulesSection title="Gameplay">
+          <Rule title="Playing Cards">
+            Play cards from your Stream, River, or Nert stack to the middle stacks, called the Lake.<br />
+            Lake stacks must start with an Ace and ascend sequentially up to the King (A-2-3-4-...-Q-K), and cards must be of the same suit.<br />
+            Any player can place an Ace in the Lake, and any player can play on any card in the Lake.
+            You may play cards from your Nert stack or Stream onto your River if they descend sequentially and alternate in color (e.g., red 6 on a black 7).<br />
+          </Rule>
+          <Rule title="Movement">
+            When a River card is played, you should immediately replace it with the top card from your Nert stack.<br />
+            If no moves are available, flip three cards from your River and see if the top card can be played. Continue cycling through your Stream until you can make a move or the game ends.<br />
+          </Rule>
+          <Rule title="Scoring">
+            Each card placed in the middle stacks is worth one point.<br />
+            Creating a King stack (completing a sequence to the King in the Lake stacks) grants an additional 3 bonus points.<br />
+            At the end of the game, each card of yours in the Lake is positive one point, while each card in your Nert stack is negative one point.<br />
+          </Rule>
+          <Rule title="Ending the Game">
+            When a player depletes their Nert stack, they must quickly hit the &quot;NERT&quot; button to signal the game&apos;s end.<br />
+            Other players may continue playing cards to the middle stacks until the game is halted.<br />
+          </Rule>
+          <Rule title="Winning">
+            The winner is the player with the highest score after points are tallied from the Lake, accounting for Kings and cards left in your Nert stack.<br />
+            The game may take multiple rounds, depending on the number of points you set to win the game.<br />
+          </Rule>
+        </RulesSection>
+        <RulesSection title="Additional Rules">
+          <Rule title="Communication">
+            Players should not disclose the contents of their hand or upcoming plays to others.
+          </Rule>
+          <Rule title="Speed">
+            Nerts is played quickly. Players should strive to play as swiftly and accurately as possible.
+          </Rule>
+          <Rule title="Etiquette">
+            Respect your fellow players. While fast and competitive, Nerts should remain friendly and fun.
+          </Rule>
+        </RulesSection>
       </div>
-    </Container>
+    </SimpleLayout>
   )
 }
+
+
+// ### Winning:
+// The winner is the player with the highest score after points are tallied from the middle stacks, King stacks, Lake, and Nert stack.
+
+//     </p>
+
+
+// ### Gameplay:
+// **Objective**: Be the first to empty your Nert stack and accumulate the most points.
+
+
+// ### Additional Rules:
+// - Communication: Players should not disclose the contents of their hand or upcoming plays to others.
+// - Speed: Nerts is played quickly. Players should strive to play as swiftly and accurately as possible.
+// - Etiquette: Respect your fellow players. While fast and competitive, Nerts should remain friendly and fun.
+
+// Remember, practice makes perfect. As you play more, you&apos;ll develop strategies and reflexes that can help you become a Nerts champion. Good luck, and enjoy the game!
+//   </div>
+// </Container> */

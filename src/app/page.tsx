@@ -77,6 +77,15 @@ export default function Home() {
                 className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-zinc-700 dark:bg-zinc-700/[0.15] dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-teal-400 dark:focus:ring-teal-400/10 sm:text-sm"
               />
             </div>
+            <div className="mt-6 flex">
+              <input
+                type="text"
+                name="code"
+                placeholder="Have a game code?"
+                aria-label="Game code"
+                className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-zinc-700 dark:bg-zinc-700/[0.15] dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-teal-400 dark:focus:ring-teal-400/10 sm:text-sm"
+              />
+            </div>
             <div className="mt-6 flex gap-3">
               <Button type="submit" variant="secondary" className="w-full order-last">
                 Start
@@ -97,7 +106,7 @@ export default function Home() {
 
         </motion.div>
         :
-        <div id="cards" className="flex h-48 justify-center mt-4" onClick={() => setCreateNew(true)}>
+        <div id="cards" className="flex h-48 justify-center mt-12" onClick={() => setCreateNew(true)}>
           <motion.div
             initial="rest"
             whileHover="hover"
