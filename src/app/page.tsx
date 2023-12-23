@@ -5,6 +5,7 @@ import { DisplayOnlyPlayingCard } from '@/components/DisplayOnlyPlayingCard'
 import { SimpleLayout } from '@/components/SimpleLayout'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/Button'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
   "use client"
@@ -44,6 +45,11 @@ export default function Home() {
 
   }
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    console.log("submit it!", event)
+  }
+
   return (
     <SimpleLayout
       title='NERTS'
@@ -61,7 +67,7 @@ export default function Home() {
           exit={{ opacity: 0, scale: 0.1 }}
         >
           <form
-            onSubmit={() => console.log("submit it!")}
+            onSubmit={handleSubmit}
             className="relative w-9/12 md:w-6/12 rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40"
           >
             <h2 className="flex text-sm font-semibold text-zinc-900 dark:text-zinc-100">
