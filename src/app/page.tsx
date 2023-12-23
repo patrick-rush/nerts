@@ -5,10 +5,11 @@ import { DisplayOnlyPlayingCard } from '@/components/DisplayOnlyPlayingCard'
 import { SimpleLayout } from '@/components/SimpleLayout'
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/Button'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
   "use client"
+  let router = useRouter()
   const [createNew, setCreateNew] = useState(false)
 
   const deckMotion = {
@@ -45,9 +46,29 @@ export default function Home() {
 
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log("submit it!", event)
+    try {
+      const response = await fetch('api/game-code', {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json'
+        }
+      })
+
+      if (response.status === 200) {
+        const responseJson = await response.json()
+        const gameCode = responseJson.body?.gameCode
+        router.push(`/nerts?code=${gameCode}`)
+      } else {
+        const res = await response.text()
+        console.log(res)
+        throw Error("An error occurred while fetching a game code.")
+      }
+    } catch (err) {
+      console.log("Error", err)
+      throw err
+    }
   }
 
   return (

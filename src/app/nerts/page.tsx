@@ -7,6 +7,7 @@ import { Tableau } from '@/components/Tableau'
 import { Stream } from '@/components/Stream'
 import type { Card, PlayCardProps, DropCardProps, HandleUpdateRiverProps, GetSourceArrayProps } from '@/types/nerts.d'
 import { LayoutGroup } from 'framer-motion'
+import {io, Socket } from 'socket.io-client'
 
 interface Player {
     displayName: string;
@@ -31,7 +32,8 @@ export default function Nerts() {
     const [gameOver, setGameOver] = useState<boolean>(false)
     const maxWasteShowing = useRef(0)
     const currentPlayer = players[0]
-
+    const shuffle = (array: any[]) => array.sort(() => 0.5 - Math.random())
+    const socket = io("http://localhost:3001/game")
     const deck = useMemo(() => suits.flatMap(suit => {
         return ranks.map(rank => {
             return {
@@ -41,7 +43,39 @@ export default function Nerts() {
         });
     }), [])
 
-    const shuffle = (array: any[]) => array.sort((a, b) => 0.5 - Math.random())
+useEffect(() => {
+        
+        socket.on('connect', () => {
+            console.log('>>> ws: connected')
+            socket.emit('request_game')
+        })
+        
+        socket.on('game_updated', (message: { data: string }) => {
+            console.log('>>> ws: updated', message)
+            updateGame(message.data)
+        })
+
+        socket.on('ping', (message: { data: string }) => {
+            console.log('>>> ws: ping', message)
+        })
+        
+        socket.on('disconnect', () => {
+            console.log('>>> ws: disconnect')
+            console.error('Ops, something went wrong')
+        })
+
+        // Cleanup on component unmount
+        return () => {
+            socket.off('connect')
+            socket.off('orders_updated')
+            socket.off('disconnect')
+            socket.close()
+        }
+    }, [])
+
+    const updateGame = (message: string) => {
+        console.log("Updating game:", message)
+    }
 
     useEffect(() => {
         const shuffledDeck: Card[] = shuffle(deck)
@@ -141,6 +175,7 @@ export default function Nerts() {
         const copyOfLake = [...lake]
         const cardToMove = sourceArray.pop()
         if (cardToMove) {
+            socket.emit('game', cardToMove)
             copyOfLake[destination].push(cardToMove)
             setLastInLake({ player: currentPlayer, card: cardToMove })
         }
