@@ -11,6 +11,9 @@ export default function Home() {
   "use client"
   let router = useRouter()
   const [createNew, setCreateNew] = useState(false)
+  const [name, setName] = useState('')
+  const [code, setCode] = useState('')
+
 
   const deckMotion = {
     rest: { opacity: 0, scale: 0.5 },
@@ -46,20 +49,53 @@ export default function Home() {
 
   }
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleJoinGame = async () => {
     try {
-      const response = await fetch('api/game-code', {
-        method: 'GET',
+      const response = await fetch('api/join-game', {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          code,
+        }),
         headers: {
-          'content-type': 'application/json'
+          'content-type': 'application/json',
         }
       })
 
       if (response.status === 200) {
         const responseJson = await response.json()
         const gameCode = responseJson.body?.gameCode
-        router.push(`/nerts?code=${gameCode}`)
+        const playerId = responseJson.body?.playerId
+        router.push(`/nerts?code=${gameCode}&player=${playerId}`)
+      } else {
+        const res = await response.text()
+        console.log(res)
+        throw Error("An error occurred while connecting to game.")
+      }
+    } catch (err) {
+      console.log("Error", err)
+      throw err
+    }
+  }
+
+  const handleCreateGame = async () => {
+    try {
+      const response = await fetch('api/create-game', {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          code,
+        }),
+        headers: {
+          'content-type': 'application/json',
+        }
+      })
+
+      if (response.status === 200) {
+        const responseJson = await response.json()
+        const gameCode = responseJson.body?.gameCode
+        const playerId = responseJson.body?.playerId
+        router.push(`/nerts?code=${gameCode}&player=${playerId}`)
       } else {
         const res = await response.text()
         console.log(res)
@@ -71,9 +107,19 @@ export default function Home() {
     }
   }
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    if (code) {
+      handleJoinGame()
+    } else {
+      handleCreateGame()
+    }
+  }
+
   return (
     <SimpleLayout
-      title='NERTS'
+      // title='NERTS'
       intro='Nerts is a fast-paced, multi-player card game that combines the excitement of Solitaire with the competitive edge of a race. Players simultaneously build sequences of cards while trying to outmaneuver their opponents. It&apos;s a dynamic, energetic experience that tests your speed, strategy, and adaptability. Dive into Nerts, where quick thinking and a sharp eye can lead you to victory!'
     >
       {createNew ?
@@ -98,6 +144,8 @@ export default function Home() {
               <input
                 type="text"
                 name="name"
+                value={name}
+                onChange={(event) => setName(event.target.value)}    
                 placeholder="Your name"
                 aria-label="Your name"
                 required
@@ -108,6 +156,8 @@ export default function Home() {
               <input
                 type="text"
                 name="code"
+                value={code}
+                onChange={(event) => setCode(event.target.value)}    
                 placeholder="Have a game code?"
                 aria-label="Game code"
                 className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-zinc-700 dark:bg-zinc-700/[0.15] dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-teal-400 dark:focus:ring-teal-400/10 sm:text-sm"

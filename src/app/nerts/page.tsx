@@ -7,31 +7,29 @@ import { Tableau } from '@/components/Tableau'
 import { Stream } from '@/components/Stream'
 import type { Card, PlayCardProps, DropCardProps, HandleUpdateRiverProps, GetSourceArrayProps } from '@/types/nerts.d'
 import { LayoutGroup } from 'framer-motion'
-import {io, Socket } from 'socket.io-client'
+import { io, Socket } from 'socket.io-client'
+import { useSearchParams } from 'next/navigation'
 
 interface Player {
-    displayName: string;
+    name: string;
     id: string;
 }
 
 export default function Nerts() {
     "use client"
-    const [players, setPlayers] = useState<Player[]>([{
-        displayName: 'Patrick',
-        id: 'ec16fc8e-7e79-49ee-bd83-98b191e0ca72',
-    }, {
-        displayName: 'Esther',
-        id: 'cb98ca55-3fde-407c-8489-cc900977a92a',
-    },])
+    const searchParams = useSearchParams()
+    const code = searchParams?.get("code")
+    const playerId = searchParams?.get("player")
+    const [players, setPlayers] = useState<Player[]>([])
     const [nertStack, setNertStack] = useState<Card[]>([])
     const [river, setRiver] = useState<Card[][]>([[], [], [], []])
     const [stream, setStream] = useState<Card[]>([])
     const [waste, setWaste] = useState<Card[]>([])
-    const [lake, setLake] = useState<Card[][]>(Array.from({ length: 4 * players.length }, () => []))
-    const [lastInLake, setLastInLake] = useState<{ player: Player, card: Card } | null>(null)
+    const [lake, setLake] = useState<Card[][]>([])
+    const [lastInLake, setLastInLake] = useState<{ player: Player | undefined, card: Card } | null>(null)
     const [gameOver, setGameOver] = useState<boolean>(false)
+    const [currentPlayer, setCurrentPlayer] = useState<Player>()
     const maxWasteShowing = useRef(0)
-    const currentPlayer = players[0]
     const shuffle = (array: any[]) => array.sort(() => 0.5 - Math.random())
     const socket = io("http://localhost:3001/game")
     const deck = useMemo(() => suits.flatMap(suit => {
@@ -43,13 +41,13 @@ export default function Nerts() {
         });
     }), [])
 
-useEffect(() => {
-        
+    useEffect(() => {
+
         socket.on('connect', () => {
             console.log('>>> ws: connected')
             socket.emit('request_game')
         })
-        
+
         socket.on('game_updated', (message: { data: string }) => {
             console.log('>>> ws: updated', message)
             updateGame(message.data)
@@ -58,12 +56,28 @@ useEffect(() => {
         socket.on('ping', (message: { data: string }) => {
             console.log('>>> ws: ping', message)
         })
-        
+
         socket.on('disconnect', () => {
             console.log('>>> ws: disconnect')
             console.error('Ops, something went wrong')
         })
 
+        socket.on('update_lake', (message: { data: string }) => {
+            const updatedLake = JSON.parse(message.data)
+            console.log(">>> updatedLake", updatedLake)
+            setLake(updatedLake)
+        })
+
+        // Cleanup on component unmount
+        return () => {
+            socket.off('connect')
+            socket.off('orders_updated')
+            socket.off('disconnect')
+            socket.close()
+        }
+    }, [])
+
+    useEffect(() => {
         // Cleanup on component unmount
         return () => {
             socket.off('connect')
@@ -78,19 +92,44 @@ useEffect(() => {
     }
 
     useEffect(() => {
+        const fetchPlayers = async () => {
+            if (code) {
+                try {
+                    const response = await fetch(`api/get-players?code=${code}`)
+                    if (response.status === 200) {
+                        const responseJson = await response.json()
+                        setPlayers(responseJson.body?.players)
+                    } else {
+                        const res = await response.text()
+                        console.log(res)
+                        throw Error("An error occurred while retrieving players.")
+                    }
+                } catch (err) {
+                    console.log("Error", err)
+                    throw err
+                }
+            }
+        }
+        fetchPlayers()
+        console.log("players", players)
+    }, [code, playerId])
+
+    useEffect(() => {
         const shuffledDeck: Card[] = shuffle(deck)
         setNertStack(shuffledDeck.splice(0, 13))
-        setLake(Array.from({ length: 4 * players.length }, () => []))
         setStream(shuffledDeck)
         setWaste([])
+        setLake(Array.from({ length: 4 * players?.length }, () => []))
+        setCurrentPlayer(players?.find(player => player.id === playerId))
         setRiver([
             shuffledDeck.splice(0, 1),
             shuffledDeck.splice(0, 1),
             shuffledDeck.splice(0, 1),
             shuffledDeck.splice(0, 1),
         ])
+        console.log("players", players)
         maxWasteShowing.current = 0
-    }, [deck, players])
+    }, [deck, playerId, players])
 
     const wasteCards = useCallback(() => {
         if (gameOver) return
@@ -175,7 +214,7 @@ useEffect(() => {
         const copyOfLake = [...lake]
         const cardToMove = sourceArray.pop()
         if (cardToMove) {
-            socket.emit('game', cardToMove)
+            socket.emit('add_to_lake', { code, playerId, cardToMove, destination })
             copyOfLake[destination].push(cardToMove)
             setLastInLake({ player: currentPlayer, card: cardToMove })
         }
@@ -297,7 +336,7 @@ useEffect(() => {
                 return null
             }
 
-            target = findTarget(4 * players.length, lake, CardSource.Lake)
+            target = findTarget(4 * players?.length, lake, CardSource.Lake)
 
             if (!target) target = findTarget(4, river, CardSource.River)
 
@@ -342,7 +381,7 @@ useEffect(() => {
             <LayoutGroup >
                 <div className="rounded-2xl sm:border sm:border-zinc-100 sm:p-8 sm:dark:border-zinc-700/40">
                     {/* lake */}
-                    <Lake numberOfPlayers={players.length} lake={lake} lastInLake={lastInLake} />
+                    <Lake numberOfPlayers={players?.length} lake={lake} lastInLake={lastInLake} />
                     {/* tableau */}
                     <Tableau river={river} nertStack={nertStack} playCard={playCard} endGame={endGame} onDragEnd={dropCard} />
                     {/* stream & waste */}

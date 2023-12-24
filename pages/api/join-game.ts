@@ -5,16 +5,21 @@ export default async function handler(
     res: NextApiResponse
 ) {
 
-    const URI = process.env.NERTS_API_URI || 'http://localhost:3001/v1/code/';
+    const URI = process.env.NERTS_API_URI || 'http://localhost:3001/v1/game/join';
+    const { name, code } = req.body
 
     let response
     try {
         console.log(">>> URI", URI)
         response = await fetch(URI, {
-            method: 'GET',
-            // headers: {
-            //     'Content-Type': 'application/json',
-            // }
+            method: 'POST',
+            body: JSON.stringify({
+                name,
+                code
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            }
         })
         console.log(">>> response before", response)
 
