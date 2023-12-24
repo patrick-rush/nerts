@@ -31,7 +31,7 @@ export default function Nerts() {
     const [currentPlayer, setCurrentPlayer] = useState<Player>()
     const maxWasteShowing = useRef(0)
     const shuffle = (array: any[]) => array.sort(() => 0.5 - Math.random())
-    const socket = io("http://localhost:3001/game")
+    const socket = io(`http://localhost:3001/game`)
     const deck = useMemo(() => suits.flatMap(suit => {
         return ranks.map(rank => {
             return {
@@ -45,7 +45,16 @@ export default function Nerts() {
 
         socket.on('connect', () => {
             console.log('>>> ws: connected')
-            socket.emit('request_game')
+            socket.emit('request_game', { code, playerId }, (response: any) => {
+                console.log(">>> game", response.game)
+                const game = response.game
+                if (game) {
+                    setPlayers(game.players)
+                    setLake(game.lake)
+                }
+                console.log("players", players)
+                console.log("lake", lake)
+            })
         })
 
         socket.on('game_updated', (message: { data: string }) => {
@@ -77,49 +86,38 @@ export default function Nerts() {
         }
     }, [])
 
-    useEffect(() => {
-        // Cleanup on component unmount
-        return () => {
-            socket.off('connect')
-            socket.off('orders_updated')
-            socket.off('disconnect')
-            socket.close()
-        }
-    }, [])
-
     const updateGame = (message: string) => {
         console.log("Updating game:", message)
     }
 
-    useEffect(() => {
-        const fetchPlayers = async () => {
-            if (code) {
-                try {
-                    const response = await fetch(`api/get-players?code=${code}`)
-                    if (response.status === 200) {
-                        const responseJson = await response.json()
-                        setPlayers(responseJson.body?.players)
-                    } else {
-                        const res = await response.text()
-                        console.log(res)
-                        throw Error("An error occurred while retrieving players.")
-                    }
-                } catch (err) {
-                    console.log("Error", err)
-                    throw err
-                }
-            }
-        }
-        fetchPlayers()
-        console.log("players", players)
-    }, [code, playerId])
+    // useEffect(() => {
+    //     const fetchPlayers = async () => {
+    //         if (code) {
+    //             try {
+    //                 const response = await fetch(`api/get-players?code=${code}`)
+    //                 if (response.status === 200) {
+    //                     const responseJson = await response.json()
+    //                     setPlayers(responseJson.body?.players)
+    //                 } else {
+    //                     const res = await response.text()
+    //                     console.log(res)
+    //                     throw Error("An error occurred while retrieving players.")
+    //                 }
+    //             } catch (err) {
+    //                 console.log("Error", err)
+    //                 throw err
+    //             }
+    //         }
+    //     }
+    //     fetchPlayers()
+    //     console.log("players", players)
+    // }, [code, playerId])
 
     useEffect(() => {
         const shuffledDeck: Card[] = shuffle(deck)
         setNertStack(shuffledDeck.splice(0, 13))
         setStream(shuffledDeck)
         setWaste([])
-        setLake(Array.from({ length: 4 * players?.length }, () => []))
         setCurrentPlayer(players?.find(player => player.id === playerId))
         setRiver([
             shuffledDeck.splice(0, 1),
@@ -130,6 +128,15 @@ export default function Nerts() {
         console.log("players", players)
         maxWasteShowing.current = 0
     }, [deck, playerId, players])
+
+    function emit<T>(socket: Socket, event: string, arg: T): void {
+        socket.timeout(2000).emit(event, arg, (err: Error | null) => {
+            if (err) {
+                // no ack from the server, let's retry
+                emit(socket, event, arg);
+            }
+        });
+    }
 
     const wasteCards = useCallback(() => {
         if (gameOver) return
