@@ -52,11 +52,6 @@ export default function Nerts() {
             })
         })
 
-        socket.on('game_updated', (message: { data: string }) => {
-            console.log('>>> ws: updated', message)
-            updateGame(message.data)
-        })
-
         socket.on('ping', (message: { data: string }) => {
             console.log('>>> ws: ping', message)
         })
