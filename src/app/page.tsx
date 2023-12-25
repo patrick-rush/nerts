@@ -157,6 +157,7 @@ export default function Home() {
                 type="text"
                 name="code"
                 value={code}
+                pattern="([0-9]){6}"
                 onChange={(event) => setCode(event.target.value)}    
                 placeholder="Have a game code?"
                 aria-label="Game code"
@@ -165,7 +166,7 @@ export default function Home() {
             </div>
             <div className="mt-6 flex gap-3">
               <Button type="submit" variant="secondary" className="w-full order-last">
-                Start
+                {code ? 'Join Game' : 'Start New Game'}
               </Button>
               <Button
                 type="submit"
