@@ -13,10 +13,8 @@ export default async function handler(
     try {
         console.log(">>> URI", URI)
         response = await fetch(URI + '?code=' + encodeURIComponent(code))
-        console.log(">>> response before", response)
 
         const responseJson = await response.json()
-        console.log("in get players", responseJson)
         return res.status(200).json({
             message: "Success",
             body: responseJson

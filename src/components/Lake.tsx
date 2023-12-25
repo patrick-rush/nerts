@@ -16,10 +16,10 @@ export function Lake({
 }: {
     numberOfPlayers: number;
     lake: Card[][];
-    lastInLake: { player: Player, card: Card } | null;
+    lastInLake: { player: Player | undefined, card: Card } | null;
 }) {
     const [playAnimation, setPlayAnimation] = useState(false)
-    const previousLastInLake = useRef<{ player: Player, card: Card } | null>(null)
+    const previousLastInLake = useRef<{ player: Player | undefined, card: Card } | null>(null)
     const timeoutRef = useRef<NodeJS.Timeout>()
 
     useEffect(() => {
@@ -42,7 +42,7 @@ export function Lake({
 
     return (
         <div id="lake" className="pb-8">
-            <div className="grid grid-cols-8 place-items-center px-8 outline outline-zinc-100 outline-offset-4 rounded-md dark:outline-zinc-700/40">
+            <div className="grid grid-cols-8 min-h-24 md:min-h-36 place-items-center px-8 outline outline-zinc-100 outline-offset-4 rounded-md dark:outline-zinc-700/40">
                 {Array.from({ length: (numberOfPlayers * 4) }).map((_, index) => {
                     const pile = lake[index]
                     let showPlayerName
@@ -62,7 +62,7 @@ export function Lake({
                                     exit={{ opacity: 0, scale: 0.5 }}
                                     className="absolute -top-20 w-full flex justify-center"
                                 >
-                                    <span className="text-sm text-center font-semibold text-teal-500 dark:text-teal-400">{lastInLake?.player.name} +{lastInLake?.card.rank.position === 13 ? '3' : '1'}</span>
+                                    <span className="text-sm text-center font-semibold text-teal-500 dark:text-teal-400">{lastInLake?.player?.name} +{lastInLake?.card?.rank.position === 13 ? '3' : '1'}</span>
                                 </motion.div>}
                             </AnimatePresence>
                             {pile?.map((card, cardIndex) => {
@@ -73,8 +73,8 @@ export function Lake({
                                     <PlayingCard
                                         className={shadow}
                                         key={cardIndex}
-                                        suit={card.suit}
-                                        rank={card.rank}
+                                        suit={card?.suit}
+                                        rank={card?.rank}
                                         isShowing={true}
                                     />
                                 )

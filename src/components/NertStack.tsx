@@ -63,8 +63,8 @@ export function NertStack({
                                     className={shadow}
                                     style={{ zIndex: zIndex }}
                                     key={index}
-                                    suit={card.suit}
-                                    rank={card.rank}
+                                    suit={card?.suit}
+                                    rank={card?.rank}
                                     isShowing={true}
                                     draggable={index === nertStack.length - 1}
                                     onDragStart={handleDragStart}

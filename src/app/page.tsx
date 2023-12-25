@@ -119,8 +119,8 @@ export default function Home() {
 
   return (
     <SimpleLayout
-      // title='NERTS'
-      intro='Nerts is a fast-paced, multi-player card game that combines the excitement of Solitaire with the competitive edge of a race. Players simultaneously build sequences of cards while trying to outmaneuver their opponents. It&apos;s a dynamic, energetic experience that tests your speed, strategy, and adaptability. Dive into Nerts, where quick thinking and a sharp eye can lead you to victory!'
+      title="NƎRTS"
+      intro='Nɘrts is a fast-paced, multi-player card game that combines the excitement of Solitaire with the competitive edge of a race. Players simultaneously build sequences of cards while trying to outmaneuver their opponents. It&apos;s a dynamic, energetic experience that tests your speed, strategy, and adaptability. Dive into Nɘrts, where quick thinking and a sharp eye can lead you to victory!'
     >
       {createNew ?
         <motion.div

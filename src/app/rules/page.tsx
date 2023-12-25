@@ -36,14 +36,14 @@ function Rule({
 
 export const metadata = {
   title: 'Rules',
-  description: "Welcome to Nerts! Here are some rules and explanations.",
+  description: "Welcome to Nɘrts! Here are some rules and explanations.",
 }
 
 export default function Rules() {
   return (
     <SimpleLayout
-      title="Nerts: Game Explanation and Rules"
-      intro="Welcome to Nerts, a fast-paced, competitive card game that combines strategy, speed, and a bit of luck. The objective is to score as many points as possible by playing cards to the middle stacks while minimizing points left in your Nert stack. Here&apos;s how you play:"
+      title="Nɘrts: Game Explanation and Rules"
+      intro="Welcome to Nɘrts, a fast-paced, competitive card game that combines strategy, speed, and a bit of luck. The objective is to score as many points as possible by playing cards to the middle stacks while minimizing points left in your Nert stack. Here&apos;s how you play:"
     >
       <div className="space-y-20">
         <RulesSection title="Setup">
@@ -90,10 +90,10 @@ export default function Rules() {
             Players should not disclose the contents of their hand or upcoming plays to others.
           </Rule>
           <Rule title="Speed">
-            Nerts is played quickly. Players should strive to play as swiftly and accurately as possible.
+            Nɘrts is played quickly. Players should strive to play as swiftly and accurately as possible.
           </Rule>
           <Rule title="Etiquette">
-            Respect your fellow players. While fast and competitive, Nerts should remain friendly and fun.
+            Respect your fellow players. While fast and competitive, Nɘrts should remain friendly and fun.
           </Rule>
         </RulesSection>
       </div>

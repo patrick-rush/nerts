@@ -38,8 +38,9 @@ export enum CardPosition {
 export enum CardSource {
     River = 'river',
     Waste = 'waste',
-    Nert = 'nert',
-    Lake = 'lake'
+    Nert = 'nertStack',
+    Lake = 'lake',
+    Stream = 'stream',
 }
 
 export const suits: Suit[] = Object.values(SuitName).map(suitName => ({

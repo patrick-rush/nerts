@@ -20,10 +20,8 @@ export default async function handler(
                 'Content-Type': 'application/json',
             }
         })
-        console.log(">>> response before", response)
 
         const responseJson = await response.json()
-        console.log("in fe api", responseJson)
         return res.status(200).json({
             message: "Success",
             body: responseJson
