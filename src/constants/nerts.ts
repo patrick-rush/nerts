@@ -1,4 +1,4 @@
-import type { Suit, RankDetails } from '@/types/nerts'
+import type { Suit, RankDetails, Card } from '@/types/nerts'
 
 export enum SuitName {
     Hearts = 'Hearts',
@@ -87,3 +87,19 @@ export const ranks: RankDetails[] = Object.entries(Rank).map(([name, display], i
     name: rankNames[display],
     position: index + 1
 }));
+
+export const cardLookup: { [key: number]: Card} = {}
+
+let i = 0
+export const deck = suits.flatMap((suit): Card[] => {
+    return ranks.map((rank) => {
+        const value = {
+            lookup: i,
+            suit,
+            rank,
+        }
+        cardLookup[i] = value
+        i++
+        return value
+    })
+})

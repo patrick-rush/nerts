@@ -1,6 +1,6 @@
 "use client"
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { suits, ranks, CardSource } from '@/constants/nerts'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { CardSource, cardLookup } from '@/constants/nerts'
 import { Container } from '@/components/Container'
 import { Lake } from '@/components/Lake'
 import { Tableau } from '@/components/Tableau'
@@ -31,6 +31,8 @@ export default function Nerts() {
     const [currentPlayer, setCurrentPlayer] = useState<Player>()
     const maxWasteShowing = useRef(0)
     const socket = io(`http://localhost:3001/game`)
+    const timeoutRef = useRef<NodeJS.Timeout>()
+    const intervalRef = useRef<NodeJS.Timer>()
 
     useEffect(() => {
         socket.on('connect', () => {
@@ -52,6 +54,10 @@ export default function Nerts() {
             })
         })
 
+        socket.on('reconnect', (attempt) => {
+            console.log("Socket reconnected on attempt", attempt)
+        })
+
         socket.on('ping', (message: { data: string }) => {
             console.log('>>> ws: ping', message)
         })
@@ -62,9 +68,15 @@ export default function Nerts() {
         })
 
         socket.on('update_lake', (message: { data: any }) => {
-            const updatedGame = message.data
-            console.log(">>> updatedGame", updatedGame)
-            setLake(updatedGame.lake)
+            const updatedLake = message.data
+            console.log(">>> updatedGame", updatedLake)
+            const deserializedLake: Card[][] = updatedLake.map((pile: number[]) => {
+                return pile.map((card: number) => {
+                    console.log("card", card)
+                    return cardLookup[card]
+                })
+            })
+            setLake(deserializedLake)
         })
 
         // Cleanup on component unmount
@@ -76,15 +88,55 @@ export default function Nerts() {
         }
     }, [])
 
-    const updateGame = (message: string) => {
-        console.log("Updating game:", message)
-    }
+    const emit = useCallback(function emit<T>(socket: Socket, event: string, arg: T): void { // TODO: set up ack from server to make sure events fire
+        socket.emitWithAck(event, arg, (err: Error | null) => {
+            if (err) {
+                // no ack from the server, let's retry
+                emit(socket, event, arg);
+            }
+        });
+    }, [])
 
-    const updatePiles = useCallback((piles: { location: string, updatedPile: Card[] | Card[][] }[] ) => {
-        console.log("Attempting to update piles")
-        // emit(socket, "update_piles", { code, playerId, piles })
-        socket.emit('update_piles', { code, playerId, piles })
-    }, [code, playerId, socket])
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current)
+            if (intervalRef.current) clearInterval(intervalRef.current)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current)
+        if (intervalRef.current) clearTimeout(intervalRef.current)
+
+        timeoutRef.current = setTimeout(() => {
+            // pile update routing
+            if (intervalRef.current) clearInterval(intervalRef.current)
+
+            const serializedPile = (pile: Card[]) => {
+                return pile.map((card: Card) => card.lookup)
+            }
+            console.log("Before serializing", stream)
+            console.log("Emitting update event", serializedPile(stream))
+
+            intervalRef.current = setInterval(() => {
+                emit(socket, 'update_piles', {
+                    code, playerId, piles: [{
+                        location: CardSource.River,
+                        updatedPile: river.map((pile: Card[]) => serializedPile(pile))
+                    }, {
+                        location: CardSource.Stream,
+                        updatedPile: serializedPile(stream)
+                    }, {
+                        location: CardSource.Waste,
+                        updatedPile: serializedPile(waste)
+                    }, {
+                        location: CardSource.Nert,
+                        updatedPile: serializedPile(nertStack)
+                    }]
+                })
+            }, 15 * 1000)
+        }, 2 * 1000)
+    }, [code, emit, nertStack, playerId, river, socket, stream, waste])
 
     useEffect(() => {
         setCurrentPlayer(players?.find(player => player.id === playerId))
@@ -92,14 +144,7 @@ export default function Nerts() {
         maxWasteShowing.current = 0
     }, [playerId, players])
 
-    function emit<T>(socket: Socket, event: string, arg: T): void { // TODO: set up ack from server to make sure events fire
-        socket.timeout(2000).emit(event, arg, (err: Error | null) => {
-            if (err) {
-                // no ack from the server, let's retry
-                emit(socket, event, arg);
-            }
-        });
-    }
+
 
     const wasteCards = useCallback(() => {
         if (gameOver) return
@@ -113,11 +158,11 @@ export default function Nerts() {
         }[] = []
 
         if (topOfStream.length > 0) {
-            newWaste = [ ...waste, ...topOfStream]
+            newWaste = [...waste, ...topOfStream]
             maxWasteShowing.current = newWaste.length
             serverUpdates.push(
-                { 
-                    location: CardSource.Stream, 
+                {
+                    location: CardSource.Stream,
                     updatedPile: stream,
                 },
             )
@@ -126,21 +171,20 @@ export default function Nerts() {
             const newStream = waste.flat()//.reverse()
             setStream(newStream)
             serverUpdates.push(
-                { 
-                    location: CardSource.Stream, 
+                {
+                    location: CardSource.Stream,
                     updatedPile: newStream,
                 },
             )
         }
         setWaste(newWaste)
         serverUpdates.push(
-            { 
-                location: CardSource.Waste, 
+            {
+                location: CardSource.Waste,
                 updatedPile: newWaste,
             },
         )
-        updatePiles(serverUpdates)
-    }, [gameOver, stream, updatePiles, waste])
+    }, [gameOver, stream, waste])
 
     const isCompatible = (boardArea: string, movingCard: Card, stationaryCard?: Card) => {
         switch (boardArea) {
@@ -175,7 +219,7 @@ export default function Nerts() {
         sourceIndex,
         start
     }: HandleUpdateRiverProps) => {
-        console.log({destination, source, sourceIndex, start, waste})
+        console.log({ destination, source, sourceIndex, start, waste })
         const copyOfRiver = [...river]
         let sourceArray
         if (start != null && sourceIndex != null) {
@@ -194,16 +238,15 @@ export default function Nerts() {
             location: string;
             updatedPile: Card[] | Card[][];
         }[] = [
-            { 
-                location: CardSource.River, 
-                updatedPile: copyOfRiver,
-            },
-        ]
+                {
+                    location: CardSource.River,
+                    updatedPile: copyOfRiver,
+                },
+            ]
         if (sourceArray) serverUpdates.push({
             location: source,
             updatedPile: sourceArray,
         })
-        updatePiles(serverUpdates)
         return true
     }
 
@@ -223,7 +266,7 @@ export default function Nerts() {
         const copyOfLake = [...lake]
         const cardToMove = sourceArray.pop()
         if (cardToMove) {
-            socket.emit('add_to_lake', { code, playerId, cardToMove, destination })
+            emit(socket, 'add_to_lake', { code, playerId, cardToMove, destination })
             setLastInLake({ player: currentPlayer, card: cardToMove })
         }
         setLake(copyOfLake)
@@ -231,17 +274,15 @@ export default function Nerts() {
             location: string;
             updatedPile: Card[] | Card[][];
         }[] = [
-            { 
-                location: CardSource.Lake, 
-                updatedPile: copyOfLake,
-            },
-        ]
+                {
+                    location: CardSource.Lake,
+                    updatedPile: copyOfLake,
+                },
+            ]
         if (sourceArray) serverUpdates.push({
             location: source,
             updatedPile: sourceArray,
         })
-        updatePiles(serverUpdates)
-
         return true
     }
 
