@@ -1,25 +1,28 @@
 "use client"
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { io, Socket } from 'socket.io-client'
+import { LayoutGroup } from 'framer-motion'
+import type {
+    Card,
+    DropCardProps,
+    GetSourceArrayProps,
+    HandleUpdateRiverProps,
+    PlayCardProps,
+    Player,
+} from '@/types/nerts.d'
 import { CardSource, cardLookup } from '@/constants/nerts'
 import { Container } from '@/components/Container'
 import { Lake } from '@/components/Lake'
 import { Tableau } from '@/components/Tableau'
 import { Stream } from '@/components/Stream'
-import type { Card, PlayCardProps, DropCardProps, HandleUpdateRiverProps, GetSourceArrayProps } from '@/types/nerts.d'
-import { LayoutGroup } from 'framer-motion'
-import { io, Socket } from 'socket.io-client'
-import { useSearchParams } from 'next/navigation'
-
-interface Player {
-    name: string;
-    id: string;
-}
 
 export default function Nerts() {
     "use client"
     const searchParams = useSearchParams()
-    const code = searchParams?.get("code")
-    const playerId = searchParams?.get("player")
+    const code = searchParams?.get('code')
+    const playerId = searchParams?.get('player')
+
     const [players, setPlayers] = useState<Player[]>([])
     const [nertStack, setNertStack] = useState<Card[]>([])
     const [river, setRiver] = useState<Card[][]>([[], [], [], []])
@@ -29,8 +32,14 @@ export default function Nerts() {
     const [lastInLake, setLastInLake] = useState<{ player: Player | undefined, card: Card } | null>(null)
     const [gameOver, setGameOver] = useState<boolean>(false)
     const [currentPlayer, setCurrentPlayer] = useState<Player>()
+    const [gameLoaded, setGameLoaded] = useState(false)
+
     const maxWasteShowing = useRef(0)
-    const socket = io(`http://localhost:3001/game`)
+
+    const NERTS_WS_URI = process.env.NERTS_WS_URI || 'http://localhost:3001/game'
+    console.log("socket URI", NERTS_WS_URI)
+    const socket = io(NERTS_WS_URI)
+
     const timeoutRef = useRef<NodeJS.Timeout>()
 
     useEffect(() => {
@@ -39,25 +48,25 @@ export default function Nerts() {
             try {
                 socket.emit('request_game', { code, playerId }, (response: any) => {
                     const game = response.game
-                    if (!game) throw new Error("Failed to fetch game.")
-                    if (game) {
-                        setPlayers(game.players)
-                        setLake(game.lake)
-                        const currentPlayer = game.players.find((player: any) => player.id === playerId)  // TODO: type this later
-                        setCurrentPlayer(currentPlayer)
-                        setNertStack(currentPlayer.deal.nertStack)
-                        setRiver(currentPlayer.deal.river)
-                        setStream(currentPlayer.deal.stream)
-                        setWaste(currentPlayer.deal.waste)
-                    }
+                    if (!game) throw new Error('Failed to fetch game.')
+
+                    setPlayers(game.players)
+                    setLake(game.lake)
+                    const currentPlayer = game.players.find((player: any) => player.id === playerId)  // TODO: type this later
+                    setCurrentPlayer(currentPlayer)
+                    setNertStack(currentPlayer.deal.nertStack)
+                    setRiver(currentPlayer.deal.river)
+                    setStream(currentPlayer.deal.stream)
+                    setWaste(currentPlayer.deal.waste)
+                    setGameLoaded(true)
                 })
             } catch (err) {
-                console.log("Error:", err)
+                console.log('Error:', err)
             }
         })
 
         socket.on('reconnect', (attempt) => {
-            console.log("ws: reconnect attempt:", attempt)
+            console.log('ws: reconnect attempt:', attempt)
         })
 
         socket.on('ping', (message: { data: string }) => {
@@ -71,9 +80,11 @@ export default function Nerts() {
         socket.on('update_lake', (message: { data: any }) => {
             const updatedLake = message.data
             if (!updatedLake) return
+
             const deserializedLake: Card[][] = updatedLake.map((pile: number[]) => {
                 return pile.map((card: number) => cardLookup[card])
             })
+
             setLake(deserializedLake)
         })
 
@@ -96,15 +107,15 @@ export default function Nerts() {
 
     useEffect(() => {
         const updatePiles = () => {
+            if (!gameLoaded) return
 
             if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    
+
             const serializePile = (pile: Card[]) => {
                 return pile.map((card: Card) => card.lookup)
             }
-    
+
             timeoutRef.current = setTimeout(() => {
-                console.log("Emitting update event")
                 emit(socket, 'update_piles', {
                     code, playerId, piles: [{
                         location: CardSource.River,
@@ -122,13 +133,13 @@ export default function Nerts() {
                 })
             }, 2 * 1000)
         }
-        
+
         updatePiles();
-    
+
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current)
         }
-    }, [nertStack, waste, stream, river])
+    }, [nertStack, waste, stream, river, gameLoaded])
 
     useEffect(() => {
         setCurrentPlayer(players?.find(player => player.id === playerId))
@@ -157,21 +168,26 @@ export default function Nerts() {
         switch (boardArea) {
             case CardSource.Lake:
                 if (!stationaryCard) return movingCard.rank.position === 1
+
                 const isOneMore = movingCard.rank.position - 1 === stationaryCard.rank.position
                 const isSameSuit = movingCard.suit.name === stationaryCard.suit.name
+
                 return isOneMore && isSameSuit
             case CardSource.River:
                 if (!stationaryCard) return true
+
                 const isOneLess = movingCard.rank.position + 1 === stationaryCard.rank.position
                 const isOppositeSuit = movingCard.suit.type !== stationaryCard.suit.type
+
                 return isOneLess && isOppositeSuit
             default:
-                throw new Error("Target is not a valid dropzone.")
+                throw new Error('Target is not a valid dropzone.')
         }
     }
 
     const getSourceArray = useCallback((props: GetSourceArrayProps) => {
         const { source, pileIndex } = props
+
         switch (source) {
             case CardSource.Nert: return nertStack
             case CardSource.Waste: return waste
@@ -186,15 +202,16 @@ export default function Nerts() {
         sourceIndex,
         start
     }: HandleUpdateRiverProps) => {
-        console.log({ destination, source, sourceIndex, start, waste })
         const copyOfRiver = [...river]
         let sourceArray
+
         if (start != null && sourceIndex != null) {
             copyOfRiver[destination].push(...copyOfRiver[sourceIndex!].splice(start, copyOfRiver[sourceIndex!].length))
         } else {
             const props: { source: CardSource.Nert | CardSource.Waste | CardSource.River; pileIndex?: number; } = { source }
             let cardToMove
             sourceArray = getSourceArray(props as GetSourceArrayProps)
+
             if (source === CardSource.River) props.pileIndex = sourceIndex
             if (source === CardSource.Waste) cardToMove = waste.pop()
             else cardToMove = cardToMove = sourceArray.pop()
@@ -215,15 +232,19 @@ export default function Nerts() {
         sourceIndex?: number;
     }) => {
         let sourceArray
+
         if (source === CardSource.River) sourceArray = getSourceArray({ source, pileIndex: sourceIndex! })
         else sourceArray = getSourceArray({ source })
         if (!sourceArray) return false
+
         const copyOfLake = [...lake]
         const cardToMove = sourceArray.pop()
+
         if (cardToMove) {
             emit(socket, 'add_to_lake', { code, playerId, cardToMove, destination })
             setLastInLake({ player: currentPlayer, card: cardToMove })
         }
+
         setLake(copyOfLake)
 
         return true
@@ -232,7 +253,7 @@ export default function Nerts() {
     // GAME OVER
     const endGame = () => {
         setGameOver(true)
-        window.alert("GAME OVER")
+        window.alert('GAME OVER')
     }
 
     const playCard = (props: PlayCardProps) => {
@@ -259,7 +280,6 @@ export default function Nerts() {
             const tryToPlaceOnPile = () => {
                 return river.some((pile, i) => {
                     if (i === pileIndex || pile.length === 0) return false
-
                     if (isCompatible(CardSource.River, card, pile[pile.length - 1])) return placeCard(i)
                     else return false
                 })
@@ -268,7 +288,6 @@ export default function Nerts() {
             const tryToPlaceOnBlank = () => {
                 return river.some((pile, i) => {
                     if (i === pileIndex || pile.length !== 0) return
-
                     return placeCard(i)
                 })
             }
@@ -286,7 +305,6 @@ export default function Nerts() {
         }
 
         /* try river */
-        console.log("><><", card)
         if (source === CardSource.River) {
             const isFoundationCard = foundationIndex != null
             const start = isFoundationCard ? foundationIndex : river[pileIndex!].length - 1
@@ -297,12 +315,14 @@ export default function Nerts() {
             }
 
             cardHandled = tryToPlaceInRiver(start)
+
             if (cardHandled) return true
 
             /* try lake */
         } else {
             cardHandled = tryToPlaceInLake()
             if (cardHandled) return true
+
             cardHandled = tryToPlaceInRiver()
             if (cardHandled) return true
         }
@@ -321,8 +341,8 @@ export default function Nerts() {
 
         const determineDestination = (ref: HTMLDivElement) => {
             if (!ref) {
-                console.error("Card reference does not exist.")
-                throw new Error("cardRef has no current value or current value is incompatible")
+                console.error('Card reference does not exist.')
+                throw new Error('cardRef has no current value or current value is incompatible')
             }
 
             const { bottom, top, right, left, height } = ref.getBoundingClientRect()
@@ -332,8 +352,13 @@ export default function Nerts() {
                 for (let i = 0; i < repetitions; i++) {
                     const values = document.getElementById(`${location}-${i}`)?.getBoundingClientRect()
                     let offset = 10
+
                     if (location === CardSource.River) offset = (river[i].length * (height / 5)) + 10
-                    if (values && left < values.right + 10 && right > values.left - 10 && top < values.bottom + offset && bottom > values.top - 10) {
+                    if (values &&
+                        left < values.right + 10 &&
+                        right > values.left - 10 &&
+                        top < values.bottom + offset &&
+                        bottom > values.top - 10) {
                         return {
                             pile: piles[i],
                             location: location,
@@ -348,7 +373,7 @@ export default function Nerts() {
 
             if (!target) target = findTarget(4, river, CardSource.River)
 
-            console.log(">>> target", target)
+            console.log('>>> target', target)
             return target
         }
 
@@ -357,7 +382,7 @@ export default function Nerts() {
             if (cardRef?.current) destination = determineDestination(cardRef.current)
             if (!destination) return
         } catch (err) {
-            console.info(err)
+            console.log(err)
             return
         }
 
@@ -367,7 +392,7 @@ export default function Nerts() {
             compatible = isCompatible(destination.location, card, topCard)
             if (!compatible) return
         } catch (err) {
-            console.info(err)
+            console.log(err)
             return
         }
 
@@ -378,7 +403,7 @@ export default function Nerts() {
                 else handleUpdateRiver({ destination: destination.index, source })
             }
         } catch (err) {
-            console.info(err)
+            console.log(err)
             return
         }
     }

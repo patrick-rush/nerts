@@ -5,13 +5,13 @@ export default async function handler(
     res: NextApiResponse
 ) {
 
-    const URI = process.env.NERTS_API_URI || 'http://localhost:3001/v1/game/create';
+    const URI = process.env.NERTS_HTTP_URI || 'http://localhost:3001/v1/game/'
+    const route = URI + 'create'
     const { name } = req.body
 
     let response
     try {
-        console.log(">>> URI", URI)
-        response = await fetch(URI, {
+        response = await fetch(route, {
             method: 'POST',
             body: JSON.stringify({
                 name

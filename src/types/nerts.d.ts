@@ -73,3 +73,8 @@ export type GetSourceArrayProps = | {
     source: CardSource.Nert | CardSource.Waste;
     pileIndex?: never;
 }
+
+export interface Player {
+    name: string;
+    id: string;
+}

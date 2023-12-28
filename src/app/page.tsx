@@ -74,7 +74,6 @@ export default function Home() {
       }
     } catch (err) {
       console.log("Error", err)
-      throw err
     }
   }
 
