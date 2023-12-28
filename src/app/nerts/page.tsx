@@ -11,7 +11,7 @@ import type {
     PlayCardProps,
     Player,
 } from '@/types/nerts.d'
-import { CardSource, cardLookup } from '@/constants/nerts'
+import { CardSource, cardLookup, config } from '@/constants/nerts'
 import { Container } from '@/components/Container'
 import { Lake } from '@/components/Lake'
 import { Tableau } from '@/components/Tableau'
@@ -36,8 +36,7 @@ export default function Nerts() {
 
     const maxWasteShowing = useRef(0)
 
-    const NERTS_WS_URI = process.env.NERTS_WS_URI || 'http://localhost:3001/game'
-    console.log("socket URI", NERTS_WS_URI)
+    const NERTS_WS_URI = config.NERTS_WS_URI
     const socket = io(NERTS_WS_URI)
 
     const timeoutRef = useRef<NodeJS.Timeout>()

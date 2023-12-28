@@ -103,3 +103,15 @@ export const deck = suits.flatMap((suit): Card[] => {
         return value
     })
 })
+
+const production = {
+    NERTS_WS_URI: "https://nerts-api-5hu6i.ondigitalocean.app/game",
+    NERTS_HTTP_URI: "https://nerts-api-5hu6i.ondigitalocean.app/v1/game/"
+}
+
+const development = {
+    NERTS_WS_URI: "http://localhost:3001/game",
+    NERTS_HTTP_URI: "http://localhost:3001/v1/game/"
+}
+
+export const config = process.env.NODE_ENV === "development" ? development : production

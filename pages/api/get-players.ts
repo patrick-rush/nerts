@@ -1,3 +1,4 @@
+import { config } from "@/constants/nerts";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -5,7 +6,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
 
-    const URI = process.env.NERTS_API_URI || 'http://localhost:3001/v1/game/players';
+    const URI = config.NERTS_HTTP_URI
     const code = req.query.code as string
     if (!code) return res.status(500).json({ message: "Missing code" });
 
