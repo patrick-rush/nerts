@@ -9,17 +9,10 @@ import '@/styles/tailwind.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s - Patrick Rush',
-    default:
-      'Patrick Rush - Software engineer, cellist, pilot, eternal student',
+    template: '%s | NƎRTS',
+    default: 'NƎRTS',
   },
-  description:
-    "I'm Patrick, a full-stack software engineer based in Richmond, VA.",
-  alternates: {
-    types: {
-      'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/feed.xml`,
-    },
-  },
+  description: "Fast paced card game to play with friends!",
 }
 
 export default function RootLayout({
