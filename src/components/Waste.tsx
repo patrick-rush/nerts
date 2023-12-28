@@ -58,8 +58,8 @@ export function Waste({
                             <div id={`${CardSource.Waste}-${index}`} key={index} className="absolute" style={{ left: `${offset}px`, zIndex: zIndex }}>
                                 <PlayingCard
                                     className={shadow}
-                                    suit={card.suit}
-                                    rank={card.rank}
+                                    suit={card?.suit}
+                                    rank={card?.rank}
                                     isShowing={true}
                                     draggable={index === waste.length - 1}
                                     onDragStart={handleDragStart}

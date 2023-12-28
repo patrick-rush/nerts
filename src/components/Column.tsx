@@ -89,8 +89,8 @@ export const Column = ({ pile,
                 <PlayingCard
                     className="shadow-md shadow-zinc-800 rounded-md"
                     style={{ top: `${Math.min(200 / river[riverIndex].length, 40) * parentIndex}px` }}
-                    suit={card.suit}
-                    rank={card.rank}
+                    suit={card?.suit}
+                    rank={card?.rank}
                     isShowing={true}
                     ref={cardRef}
                 />

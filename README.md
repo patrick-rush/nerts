@@ -1,4 +1,4 @@
-# NERTS!
+# NƎRTS!
 
 A game built by Patrick Rush. Questions? Reach out to me on my website: patrickrush.tech
 

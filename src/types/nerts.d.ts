@@ -11,6 +11,7 @@ export interface RankDetails {
 }
 
 export interface Card {
+    lookup: number;
     suit: Suit;
     rank: RankDetails;
 }
@@ -71,4 +72,9 @@ export type GetSourceArrayProps = | {
 } | {
     source: CardSource.Nert | CardSource.Waste;
     pileIndex?: never;
+}
+
+export interface Player {
+    name: string;
+    id: string;
 }

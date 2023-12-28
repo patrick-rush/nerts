@@ -1,4 +1,4 @@
-import type { Suit, RankDetails } from '@/types/nerts'
+import type { Suit, RankDetails, Card } from '@/types/nerts'
 
 export enum SuitName {
     Hearts = 'Hearts',
@@ -38,8 +38,9 @@ export enum CardPosition {
 export enum CardSource {
     River = 'river',
     Waste = 'waste',
-    Nert = 'nert',
-    Lake = 'lake'
+    Nert = 'nertStack',
+    Lake = 'lake',
+    Stream = 'stream',
 }
 
 export const suits: Suit[] = Object.values(SuitName).map(suitName => ({
@@ -86,3 +87,31 @@ export const ranks: RankDetails[] = Object.entries(Rank).map(([name, display], i
     name: rankNames[display],
     position: index + 1
 }));
+
+export const cardLookup: { [key: number]: Card} = {}
+
+let i = 0
+export const deck = suits.flatMap((suit): Card[] => {
+    return ranks.map((rank) => {
+        const value = {
+            lookup: i,
+            suit,
+            rank,
+        }
+        cardLookup[i] = value
+        i++
+        return value
+    })
+})
+
+const production = {
+    NERTS_WS_URI: "https://nerts-api-5hu6i.ondigitalocean.app/game",
+    NERTS_HTTP_URI: "https://nerts-api-5hu6i.ondigitalocean.app/v1/game/"
+}
+
+const development = {
+    NERTS_WS_URI: "http://localhost:3001/game",
+    NERTS_HTTP_URI: "http://localhost:3001/v1/game/"
+}
+
+export const config = process.env.NODE_ENV === "development" ? development : production

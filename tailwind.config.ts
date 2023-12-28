@@ -36,6 +36,9 @@ export default {
       animation: {
         'flip-slow': 'flip .5s ease-in-out',
       },
+      scale: {
+        '-100': '-1'
+      }
     },
     typography: typographyStyles,
   },

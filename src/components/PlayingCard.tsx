@@ -8,8 +8,8 @@ import { motion } from "framer-motion"
 
 type PlayingCardProps = {
   className?: string
-  suit: Suit;
-  rank: RankDetails;
+  suit?: Suit;
+  rank?: RankDetails;
   isShowing: boolean;
   draggable?: boolean;
   style?: any;
@@ -68,22 +68,22 @@ const PlayingCardComponent: ForwardRefRenderFunction<HTMLDivElement, PlayingCard
         {isShowing ?
           <div className="w-16 h-24 md:w-24 md:h-36 bg-white rounded-md flex flex-col justify-between p-2">
             <div className="flex justify-between">
-              <div className={`text-${suit.type}`}>
-                <p className="text-lg font-bold">{rank.display}</p>
+              <div className={`text-${suit?.type}`}>
+                <p className="text-lg font-bold">{rank?.display}</p>
               </div>
-              <div className={`text-${suit.type}`}>
-                <p className="text-lg font-thin">{suit.symbol}</p>
+              <div className={`text-${suit?.type}`}>
+                <p className="text-lg font-thin">{suit?.symbol}</p>
               </div>
             </div>
             <div className="flex-grow flex items-center justify-center">
-              <div className={`absolute text-${suit.type} font-thin ${suit.name === 'Spades' && rank.position === 1 ? 'text-[5rem] leading-[1rem] md:text-8xl' : 'text-5xl'}`}>{suit.symbol}</div>
+              <div className={`absolute text-${suit?.type} font-thin ${suit?.name === 'Spades' && rank?.position === 1 ? 'text-[5rem] leading-[1rem] md:text-8xl' : 'text-5xl'}`}>{suit?.symbol}</div>
             </div>
             <div className="hidden md:flex justify-between">
-              <div className={`text-${suit.type} rotate-180`}>
-                <p className="text-lg font-thin">{suit.symbol}</p>
+              <div className={`text-${suit?.type} rotate-180`}>
+                <p className="text-lg font-thin">{suit?.symbol}</p>
               </div>
-              <div className={`text-${suit.type} rotate-180`}>
-                <p className="text-lg font-bold">{rank.display}</p>
+              <div className={`text-${suit?.type} rotate-180`}>
+                <p className="text-lg font-bold">{rank?.display}</p>
               </div>
             </div>
           </div>

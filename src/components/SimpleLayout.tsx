@@ -5,14 +5,14 @@ export function SimpleLayout({
   intro,
   children,
 }: {
-  title: string
+  title?: string
   intro: string
   children?: React.ReactNode
 }) {
   return (
     <Container className="mt-16 sm:mt-32">
       <header className="">
-        <h1 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl text-center">
+        <h1 className="flex justify-center text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl text-center">
           {title}
         </h1>
         <div className="flex justify-center">
