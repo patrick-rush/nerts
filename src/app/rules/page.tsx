@@ -36,7 +36,7 @@ function Rule({
 
 export const metadata = {
   title: 'Rules',
-  description: "Welcome to Nɘrts! Here are some rules and explanations.",
+  description: "Some rules and explanations.",
 }
 
 export default function Rules() {
