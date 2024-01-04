@@ -16,6 +16,7 @@ import { Container } from '@/components/Container'
 import { Lake } from '@/components/Lake'
 import { Tableau } from '@/components/Tableau'
 import { Stream } from '@/components/Stream'
+import { Button } from '@/components/Button'
 
 export default function Nerts() {
     "use client"
@@ -407,9 +408,61 @@ export default function Nerts() {
         }
     }
 
+    function Player({ player }: { player: Player }) {
+        return (
+          <li className="flex gap-4">
+            {/* <div className="relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full shadow-md shadow-zinc-800/5 ring-1 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
+              <Image src={role.logo} alt="" className="h-7 w-7" unoptimized />
+            </div> */}
+            <dl className="flex flex-auto flex-wrap gap-x-2">
+              <dt className="sr-only">Skill</dt>
+              <dd className="w-full flex-none text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                {player.name}
+              </dd>
+              <dt className="sr-only">Level</dt>
+              <dd className="text-xs text-zinc-500 dark:text-zinc-400">
+                {/* {skill.level} */}
+              </dd>
+              <dt className="sr-only">Duration</dt>
+              <dd
+                className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
+                // aria-label={duration}
+              >
+                {/* <time dateTime={duration}>{duration}</time> */}
+              </dd>
+            </dl>
+          </li>
+        )
+      }
+    
+
     /* board */
     return (
         <Container className="flex h-full items-center pt-8" >
+            <div className="relative">
+                <div className="absolute -top-6 -right-32">
+                    <div className="rounded-2xl bg-zinc-100 p-6 dark:bg-zinc-700/40 flex flex-col backdrop-blur-sm">
+                        <h2 className="flex justify-between text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                            <div className="flex items-center">
+                                {/* <BriefcaseIcon className="h-6 w-6 flex-none" /> */}
+                                <span className="">Players</span>
+                            </div>
+                        </h2>
+                        <div className="flex-grow">
+                            <ol className="mt-6 space-y-4 max-h-44 overflow-scroll">
+                                {players.map((player, playerIndex) => (
+                                    <Player key={playerIndex} player={player} />
+                                ))}
+                            </ol>
+                        </div>
+                        <Button href={'#'} variant="secondary" className="group mt-6 w-full min-w-32">
+                            Ready
+                            {/* <ArrowDownIcon className="h-4 w-4 stroke-zinc-400 transition group-active:stroke-zinc-600 dark:group-hover:stroke-zinc-50 dark:group-active:stroke-zinc-50" /> */}
+                        </Button>
+                    </div>
+
+                </div>
+            </div>
             <LayoutGroup >
                 <div className="rounded-2xl sm:border sm:border-zinc-100 sm:p-8 sm:dark:border-zinc-700/40">
                     {/* lake */}
