@@ -96,7 +96,7 @@ export default function Nerts() {
     }, [])
 
     const emit = useCallback(function emit<T>(socket: Socket, event: string, arg: T): void { // TODO: set up ack from server to make sure events fire
-        socket.emitWithAck(event, arg, (err: Error | null) => {
+        socket.volatile.emitWithAck(event, arg, (err: Error | null) => {
             if (err) {
                 // no ack from the server, let's retry
                 emit(socket, event, arg);
