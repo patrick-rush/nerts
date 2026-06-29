@@ -29,12 +29,17 @@ export default function Nerts() {
     const [stream, setStream] = useState<Card[]>([])
     const [waste, setWaste] = useState<Card[]>([])
     const [lake, setLake] = useState<Card[][]>([])
-    const [lastInLake, setLastInLake] = useState<{ player: Player | undefined, card: Card } | null>(null)
+    const [lastInLake, setLastInLake] = useState<{ player: Player | undefined, card: Card, pileIndex: number } | null>(null)
     const [gameOver, setGameOver] = useState<boolean>(false)
     const [currentPlayer, setCurrentPlayer] = useState<Player>()
     const [gameLoaded, setGameLoaded] = useState(false)
 
     const maxWasteShowing = useRef(0)
+    const playersRef = useRef<Player[]>([])
+    useEffect(() => {
+        playersRef.current = players
+    }, [players])
+    const previousLakeRef = useRef<Card[][]>([])
 
     const NERTS_WS_URI = config.NERTS_WS_URI
     const socket = io(NERTS_WS_URI)
@@ -51,6 +56,7 @@ export default function Nerts() {
 
                     setPlayers(game.players)
                     setLake(game.lake)
+                    previousLakeRef.current = game.lake
                     const currentPlayer = game.players.find((player: any) => player.id === playerId)  // TODO: type this later
                     setCurrentPlayer(currentPlayer)
                     setNertStack(currentPlayer.deal.nertStack)
@@ -76,7 +82,10 @@ export default function Nerts() {
             console.error('ws: disconnect')
         })
 
-        socket.on('update_lake', (message: { data: any }) => {
+        socket.on('update_lake', (message: {
+            data: any
+            lastInLake?: { playerId: string; card: Card; pileIndex: number }
+        }) => {
             const updatedLake = message.data
             if (!updatedLake) return
 
@@ -84,12 +93,31 @@ export default function Nerts() {
                 return pile.map((card: number) => cardLookup[card])
             })
 
+            // Find the pile that grew by one card — unambiguous regardless of
+            // duplicate lookup values across multiple players' decks
+            const changedPileIndex = deserializedLake.findIndex(
+                (pile, i) => pile.length > (previousLakeRef.current[i]?.length ?? 0)
+            )
+            previousLakeRef.current = deserializedLake
+
             setLake(deserializedLake)
+
+            if (message.lastInLake) {
+                if (message.lastInLake.playerId === playerId) return
+                const movedByPlayer = playersRef.current.find(
+                    (p) => p.id === message.lastInLake!.playerId,
+                )
+                const movedCard = cardLookup[message.lastInLake.card.lookup]
+                // Prefer the authoritative pileIndex from the backend if present,
+                // otherwise use the length-comparison result
+                const pileIndex = message.lastInLake.pileIndex ?? changedPileIndex
+                if (movedCard && pileIndex !== -1) setLastInLake({ player: movedByPlayer, card: movedCard, pileIndex })
+            }
         })
 
         return () => {
             socket.off('connect')
-            socket.off('orders_updated')
+            socket.off('update_lake')
             socket.off('disconnect')
             socket.close()
         }
@@ -241,7 +269,7 @@ export default function Nerts() {
 
         if (cardToMove) {
             emit(socket, 'add_to_lake', { code, playerId, cardToMove, destination })
-            setLastInLake({ player: currentPlayer, card: cardToMove })
+            setLastInLake({ player: currentPlayer, card: cardToMove, pileIndex: destination })
         }
 
         setLake(copyOfLake)

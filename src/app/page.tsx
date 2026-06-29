@@ -155,19 +155,34 @@ export default function Home() {
               className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-zinc-700 dark:bg-zinc-700/[0.15] dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-teal-400 dark:focus:ring-teal-400/10 sm:text-sm"
             />
           </div>
-          <div className="mt-6 flex">
-            <input
-              type="number"
-              name="goal"
-              value={goal}
-              min="1"
-              max="1000"
-              onChange={(event) => setGoal(+event.target.value)}
-              placeholder="Points to play to"
-              aria-label="Points to play to"
-              required
-              className="min-w-0 flex-auto appearance-none rounded-md border border-zinc-900/10 bg-white px-3 py-[calc(theme(spacing.2)-1px)] shadow-md shadow-zinc-800/5 placeholder:text-zinc-400 focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-500/10 dark:border-zinc-700 dark:bg-zinc-700/[0.15] dark:text-zinc-200 dark:placeholder:text-zinc-500 dark:focus:border-teal-400 dark:focus:ring-teal-400/10 sm:text-sm"
-            />
+          <div className="mt-6 flex gap-3">
+            <Button
+              type="button"
+              variant={goal === 0 ? 'primary' : 'secondary'}
+              className="flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={hasGameCode}
+              onClick={() => setGoal(0)}
+            >
+              One &amp; Done
+            </Button>
+            <Button
+              type="button"
+              variant={goal === 100 ? 'primary' : 'secondary'}
+              className="flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={hasGameCode}
+              onClick={() => setGoal(100)}
+            >
+              Play to 100
+            </Button>
+            <Button
+              type="button"
+              variant={goal === 500 ? 'primary' : 'secondary'}
+              className="flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled={hasGameCode}
+              onClick={() => setGoal(500)}
+            >
+              Play to 500
+            </Button>
           </div>
           <div className={`mt-6 flex ${!hasGameCode ? 'hidden' : null}`}>
             <input
