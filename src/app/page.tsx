@@ -3,13 +3,15 @@ import { ranks, suits } from '@/constants/nerts'
 import { motion } from 'framer-motion'
 import { DisplayOnlyPlayingCard } from '@/components/DisplayOnlyPlayingCard'
 import { SimpleLayout } from '@/components/SimpleLayout'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/Button'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function Home() {
   'use client'
   let router = useRouter()
+  const searchParams = useSearchParams()
+  const nameInputRef = useRef<HTMLInputElement>(null)
   const [createNew, setCreateNew] = useState(false)
   const [hasGameCode, addGameCode] = useState(false)
   const [name, setName] = useState('')
@@ -17,6 +19,22 @@ export default function Home() {
   const [code, setCode] = useState('')
   const [playerId, setPlayerId] = useState('')
   const [isCopied, setIsCopied] = useState(false)
+  const [isCopiedLink, setIsCopiedLink] = useState(false)
+
+  useEffect(() => {
+    const joinCode = searchParams?.get('joinCode')
+    if (joinCode) {
+      setCode(joinCode)
+      addGameCode(true)
+      setCreateNew(true)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+    if (createNew && hasGameCode && nameInputRef.current) {
+      nameInputRef.current.focus()
+    }
+  }, [createNew, hasGameCode])
 
   const deckMotion = {
     rest: { opacity: 0, scale: 0.5 },
@@ -124,6 +142,15 @@ export default function Home() {
     code ? handleJoinGame() : handleCreateGame()
   }
 
+  const handleCopyLinkButtonClick = () => {
+    const shareableLink = `${window.location.origin}?joinCode=${code}`
+    navigator.clipboard.writeText(shareableLink)
+    setIsCopiedLink(true)
+    setTimeout(() => {
+      setIsCopiedLink(false)
+    }, 1000)
+  }
+
   const gameCreationForm = () => {
     return (
       <motion.div
@@ -145,6 +172,7 @@ export default function Home() {
           </h2>
           <div className="mt-6 flex">
             <input
+              ref={nameInputRef}
               type="text"
               name="name"
               value={name}
@@ -330,7 +358,7 @@ export default function Home() {
         exit={{ opacity: 0, scale: 0.1 }}
       >
         <div className="relative w-9/12 rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40 md:w-6/12">
-          <div className="relative h-12 w-full">
+          <div className="relative w-full">
             <Button
               variant="secondary"
               onClick={handleCopyButtonClick}
@@ -346,6 +374,28 @@ export default function Home() {
               <span
                 className={`absolute transition-opacity duration-300 ease-in-out ${
                   isCopied ? 'opacity-100' : 'pointer-events-none opacity-0'
+                }`}
+              >
+                Copied!
+              </span>
+            </Button>
+          </div>
+          <div className="mt-3">
+            <Button
+              variant="secondary"
+              onClick={handleCopyLinkButtonClick}
+              className="relative flex h-10 w-full items-center justify-center"
+            >
+              <span
+                className={`absolute transition-opacity duration-300 ease-in-out ${
+                  isCopiedLink ? 'pointer-events-none opacity-0' : 'opacity-100'
+                }`}
+              >
+                Copy Shareable Link
+              </span>
+              <span
+                className={`absolute transition-opacity duration-300 ease-in-out ${
+                  isCopiedLink ? 'opacity-100' : 'pointer-events-none opacity-0'
                 }`}
               >
                 Copied!
