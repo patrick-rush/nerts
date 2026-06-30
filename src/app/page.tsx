@@ -159,7 +159,7 @@ export default function Home() {
             <Button
               type="button"
               variant={goal === 0 ? 'primary' : 'secondary'}
-              className="flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex-1 disabled:cursor-not-allowed disabled:opacity-40"
               disabled={hasGameCode}
               onClick={() => setGoal(0)}
             >
@@ -168,7 +168,7 @@ export default function Home() {
             <Button
               type="button"
               variant={goal === 100 ? 'primary' : 'secondary'}
-              className="flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex-1 disabled:cursor-not-allowed disabled:opacity-40"
               disabled={hasGameCode}
               onClick={() => setGoal(100)}
             >
@@ -177,7 +177,7 @@ export default function Home() {
             <Button
               type="button"
               variant={goal === 500 ? 'primary' : 'secondary'}
-              className="flex-1 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex-1 disabled:cursor-not-allowed disabled:opacity-40"
               disabled={hasGameCode}
               onClick={() => setGoal(500)}
             >

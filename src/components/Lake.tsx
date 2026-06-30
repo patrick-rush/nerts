@@ -12,7 +12,11 @@ export function Lake({
 }: {
   numberOfPlayers: number
   lake: Card[][]
-  lastInLake: { player: Player | undefined; card: Card; pileIndex: number } | null
+  lastInLake: {
+    player: Player | undefined
+    card: Card
+    pileIndex: number
+  } | null
 }) {
   const [playAnimation, setPlayAnimation] = useState(false)
   const previousLastInLake = useRef<{
@@ -60,15 +64,15 @@ export function Lake({
       >
         {lake.map((pile, index) => {
           const playerColor = lastInLake?.player
-            ? PlayerColor[PlayerColorIndex[lastInLake.player.colorIndex ?? 0] as keyof typeof PlayerColor]
+            ? PlayerColor[
+                PlayerColorIndex[
+                  lastInLake.player.colorIndex ?? 0
+                ] as keyof typeof PlayerColor
+              ]
             : ''
           let showPlayerName
           let shadow = ''
-          if (
-            lastInLake &&
-            lastInLake.card &&
-            lastInLake.pileIndex === index
-          )
+          if (lastInLake && lastInLake.card && lastInLake.pileIndex === index)
             showPlayerName = true
           if (pile?.length) shadow = 'shadow-md shadow-zinc-800 rounded-md'
           return (
@@ -82,7 +86,7 @@ export function Lake({
             >
               <span
                 hidden
-                className="outline-indigo-400 outline-indigo-500 outline-orange-400 outline-orange-500 outline-pink-400 outline-pink-500 outline-teal-400 outline-teal-500 bg-indigo-500 bg-orange-500 bg-pink-500 bg-teal-500"
+                className="bg-indigo-500 bg-orange-500 bg-pink-500 bg-teal-500 outline-indigo-400 outline-indigo-500 outline-orange-400 outline-orange-500 outline-pink-400 outline-pink-500 outline-teal-400 outline-teal-500"
               ></span>
               {pile?.map((card, cardIndex) => {
                 const pileLength = pile?.length
@@ -92,7 +96,12 @@ export function Lake({
                 const isLastPlaced =
                   lastInLake?.pileIndex === index &&
                   cardIndex === pile.length - 1
-                const outlineColor = PlayerColor[PlayerColorIndex[lastInLake?.player?.colorIndex || 0] as keyof typeof PlayerColor]
+                const outlineColor =
+                  PlayerColor[
+                    PlayerColorIndex[
+                      lastInLake?.player?.colorIndex || 0
+                    ] as keyof typeof PlayerColor
+                  ]
                 return (
                   <PlayingCard
                     className={`${shadow} ${isLastPlaced ? `rounded-md outline outline-offset-4 outline-${outlineColor}-500 dark:outline-${outlineColor}-400` : ''}`}
